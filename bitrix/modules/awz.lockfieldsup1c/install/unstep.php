@@ -9,7 +9,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
 $dirs = explode(DIRECTORY_SEPARATOR, dirname(__DIR__, 1));
 $moduleId = array_pop($dirs);
 unset($dirs);
-$opts = ['base'=>false, 'sett'=>true, 'mail'=>false];
+$opts = ['base'=>true, 'sett'=>true, 'mail'=>false];
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/'.$moduleId.'/install/install.php");
 ?>
 <style>

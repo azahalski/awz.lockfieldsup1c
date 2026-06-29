@@ -34,7 +34,7 @@ if ($request->get('ajax_action')) {
     return;
 }
 
-if ($request->getRequestMethod()==='POST' && AccessController::isEditSettings() && $request->get('Update'))
+if ($request->getRequestMethod()==='POST' && AccessController::isEditSettings() && $request->get('Update') && check_bitrix_sessid())
 {
     // Сохранение настроек защиты полей
     $lockedProperties = [];
@@ -90,7 +90,8 @@ $tabControl->Begin();
 ?>
     <style>.adm-workarea option:checked {background-color: rgb(206, 206, 206);}</style>
     <form method="POST" action="<?=$saveUrl?>" id="FORMACTION">
-        <?php
+        <?=bitrix_sessid_post()?>
+        <?
         $tabControl->BeginNextTab();
         Extension::load("ui.alerts");
         ?>
@@ -142,30 +143,30 @@ $tabControl->Begin();
                         </tr>
                     </thead>
                     <tbody id="lock-fields-rows">
-                        <?php if(!empty($currentLockedProps)):?>
-                            <?php foreach($currentLockedProps as $key => $config):?>
+                        <?if(!empty($currentLockedProps)):?>
+                            <?foreach($currentLockedProps as $key => $config):?>
                                 <tr class="lock-field-row">
                                     <td>
                                         <select name="lock_iblock_id[]" class="lock-iblock-select" onchange="loadProperties(this)" style="max-width:160px;">
                                             <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_IBLOCK')?></option>
-                                            <?php foreach(IblockLockHandler::getIblocks() as $ib):?>
+                                            <?foreach(IblockLockHandler::getIblocks() as $ib):?>
                                                 <option value="<?=$ib['ID']?>" <?=$ib['ID'] == $config['iblock_id'] ? 'selected' : ''?>>
                                                     <?=$ib['NAME']?> [<?=$ib['ID']?>]
                                                 </option>
-                                            <?php endforeach;?>
+                                            <?endforeach;?>
                                         </select>
                                     </td>
                                     <td>
                                         <select name="lock_property_code[]" class="lock-property-select" style="max-width:200px;">
                                             <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_PROPERTY')?></option>
-                                            <?php
+                                            <?
                                             $properties = IblockLockHandler::getIblockProperties($config['iblock_id']);
                                             ?>
-                                            <?php foreach($properties as $prop):?>
+                                            <?foreach($properties as $prop):?>
                                                 <option value="<?=$prop['CODE']?>" <?=$prop['CODE'] == $config['property_code'] ? 'selected' : ''?>>
                                                     <?=$prop['NAME']?> [<?=$prop['CODE']?>]
                                                 </option>
-                                            <?php endforeach;?>
+                                            <?endforeach;?>
                                         </select>
                                     </td>
                                     <td>
@@ -173,11 +174,11 @@ $tabControl->Begin();
                                             <option value="all" <?=$config['lock_type'] == 'all' ? 'selected' : ''?>>
                                                 <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_TYPE_ALL')?>
                                             </option>
-                                            <?php if(false){?>
+                                            <?if(false){?>
                                             <option value="empty" <?=$config['lock_type'] == 'empty' ? 'selected' : ''?>>
                                                 <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_TYPE_EMPTY')?>
                                             </option>
-                                            <?php }?>
+                                            <?}?>
                                         </select>
                                     </td>
                                     <td>
@@ -192,8 +193,8 @@ $tabControl->Begin();
                                         </button>
                                     </td>
                                 </tr>
-                            <?php endforeach;?>
-                        <?php endif;?>
+                            <?endforeach;?>
+                        <?endif;?>
                     </tbody>
                 </table>
                 <br>
@@ -203,15 +204,15 @@ $tabControl->Begin();
             </td>
         </tr>
 
-        <?php $tabControl->Buttons();?>
-        <input <?php if (!AccessController::isEditSettings()) echo "disabled" ?> type="submit" class="adm-btn-green" name="Update" value="<?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_L_BTN_SAVE')?>" />
+        <?$tabControl->Buttons();?>
+        <input <?if (!AccessController::isEditSettings()) echo "disabled" ?> type="submit" class="adm-btn-green" name="Update" value="<?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_L_BTN_SAVE')?>" />
         <input type="hidden" name="Update" value="Y" />
-        <?php if(AccessController::isViewRight()){?>
+        <?if(AccessController::isViewRight()){?>
             <button class="adm-header-btn adm-security-btn" onclick="BX.SidePanel.Instance.open('<?=$saveUrl?>');return false;">
                 <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_SECT2')?>
             </button>
-        <?php }?>
-        <?php $tabControl->End();?>
+        <?}?>
+        <?$tabControl->End();?>
     </form>
 
     <script>
@@ -221,31 +222,31 @@ $tabControl->Begin();
         newRow.className = 'lock-field-row';
         newRow.innerHTML = `
             <td>
-                <select name="lock_iblock_id[]" class="lock-iblock-select" onchange="loadProperties(this)">
+                <select name="lock_iblock_id[]" class="lock-iblock-select" onchange="loadProperties(this)" style="max-width:160px;">
                     <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_IBLOCK')?></option>
-                    <?php foreach(IblockLockHandler::getIblocks() as $ib):?>
+                    <?foreach(IblockLockHandler::getIblocks() as $ib):?>
                         <option value="<?=$ib['ID']?>">
                             <?=$ib['NAME']?> [<?=$ib['ID']?>]
                         </option>
-                    <?php endforeach;?>
+                    <?endforeach;?>
                 </select>
             </td>
             <td>
-                <select name="lock_property_code[]" class="lock-property-select">
+                <select name="lock_property_code[]" class="lock-property-select" style="max-width:200px;">
                     <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_PROPERTY')?></option>
                 </select>
             </td>
             <td>
                 <select name="lock_type[]">
                     <option value="all"><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_TYPE_ALL')?></option>
-                    <?php if(false){?><option value="empty"><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_TYPE_EMPTY')?></option><?php }?>
+                    <?if(false){?><option value="empty"><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_TYPE_EMPTY')?></option><?}?>
                 </select>
             </td>
             <td>
-                <input type="text" name="lock_request_params[]" value="type=catalog&mode=import" style="width:100%;" placeholder="type=catalog&mode=import">
+                <input type="text" name="lock_request_params[]" value="type=catalog&mode=import" placeholder="type=catalog&mode=import">
             </td>
             <td>
-                <input type="text" name="lock_user_ids[]" value="" style="width:100%;" placeholder="">
+                <input type="text" name="lock_user_ids[]" value="" placeholder="">
             </td>
             <td>
                 <button type="button" class="adm-btn" onclick="removeLockRow(this)" style="margin-left:1rem;">
@@ -312,5 +313,5 @@ $tabControl->Begin();
         });
     }
     </script>
-<?php
+<?
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_admin.php");

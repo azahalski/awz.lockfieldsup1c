@@ -1,5 +1,5 @@
 <?php
-$MESS['AWZ_LOCKFIELDSUP1C_OPT_TITLE'] = "Права доступа";
+$MESS['AWZ_LOCKFIELDSUP1C_OPT_TITLE'] = "AWZ: Блокировщик свойств";
 $MESS['AWZ_LOCKFIELDSUP1C_OPT_L_BTN_SAVE'] = "Сохранить настройки";
 $MESS['AWZ_LOCKFIELDSUP1C_OPT_SECT2'] = "Права доступа";
 $MESS['AWZ_LOCKFIELDSUP1C_OPT_SECT1'] = "Общие настройки";

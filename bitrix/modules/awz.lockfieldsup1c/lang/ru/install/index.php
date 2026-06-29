@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS['AWZ_LOCKFIELDSUP1C_MODULE_NAME'] = "AWZ: Блокировщик свойств";
 $MESS['AWZ_LOCKFIELDSUP1C_MODULE_DESCRIPTION'] = "Позволяет заблокировать обновление полей при обновлении данных";
 $MESS['AWZ_PARTNER_NAME'] = "Andrew Zahalski";

@@ -25,7 +25,7 @@ if(!AccessController::isViewRight()){
             <?=Loc::getMessage('AWZ_CONFIG_PERMISSION_ERROR_RIGHT_VIEW')?>
         </span>
     </div>
-    <?
+    <?php
     return;
 }
 

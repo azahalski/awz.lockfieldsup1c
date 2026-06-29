@@ -1,4 +1,4 @@
-<?
+<?php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) {
     die();
 }
@@ -24,9 +24,9 @@ IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/'.$moduleId.'/i
     <input type="hidden" name="uninstall" value="Y">
     <input type="hidden" name="id" value="<?=$moduleId?>">
     <input type="hidden" name="step" value="2">
-    <?CAdminMessage::ShowMessage(GetMessage('MOD_UNINST_WARN'))?>
+    <?php CAdminMessage::ShowMessage(GetMessage('MOD_UNINST_WARN'))?>
     <div class="awz_module-wrap-opts">
-        <?if($opts['base']){?>
+        <?php if($opts['base']){?>
         <div class="awz_module-wrap-opts-row">
             <p><b><?= GetMessage('MOD_UNINST_SAVE')?></b></p>
             <p>
@@ -34,8 +34,8 @@ IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/'.$moduleId.'/i
                 <label for="save"><?= GetMessage('MOD_UNINST_SAVE_TABLES')?></label>
             </p>
         </div>
-        <?}?>
-        <?if($opts['sett']){?>
+        <?php }?>
+        <?php if($opts['sett']){?>
         <div class="awz_module-wrap-opts-row">
             <p><b><?= GetMessage('MOD_UNINST_SAVE_OPTS')?>:</b></p>
             <p>
@@ -43,8 +43,8 @@ IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/'.$moduleId.'/i
                 <label for="saveopts"><?= GetMessage('MOD_UNINST_SAVE_OPTS_LABEL')?></label>
             </p>
         </div>
-        <?}?>
-        <?if($opts['mail']){?>
+        <?php }?>
+        <?php if($opts['mail']){?>
         <div class="awz_module-wrap-opts-row">
             <p><b><?= GetMessage('MOD_UNINST_SAVE_EVENTS_DESC')?>:</b></p>
             <p>
@@ -52,7 +52,7 @@ IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/'.$moduleId.'/i
                 <label for="mail"><?= GetMessage('MOD_UNINST_SAVE_EVENTS')?></label>
             </p>
         </div>
-        <?}?>
+        <?php }?>
     </div>
     <div class="awz_module-wrap-btn">
     <input type="submit" value="<?= GetMessage('MOD_UNINST_DEL')?>">

@@ -15,7 +15,11 @@ class Controller extends \Bitrix\Main\Engine\Controller
     public function configureActions()
     {
         $config = [
-            'getProperties' => [],
+            'getProperties' => [
+                'prefilters' => [
+                    new \Bitrix\Main\Engine\ActionFilter\Authentication(),
+                ]
+            ],
         ];
 
         return $config;

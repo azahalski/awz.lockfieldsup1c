@@ -21,6 +21,7 @@ class IblockLockHandler
     const SYSTEM_FIELD_SECTION_IBLOCK_SECTION_ID = 'SECTION_IBLOCK_SECTION_ID';
     const SYSTEM_FIELD_ELEMENT_NAME = 'ELEMENT_NAME';
     const SYSTEM_FIELD_ELEMENT_CODE = 'ELEMENT_CODE';
+    const SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID = 'ELEMENT_IBLOCK_SECTION_ID';
 
     const SYSTEM_FIELD_SECTION_TYPE = 'section';
     const SYSTEM_FIELD_ELEMENT_TYPE = 'element';
@@ -209,7 +210,6 @@ class IblockLockHandler
 
         // Получаем список защищенных свойств для этого инфоблока
         $protectedProps = self::getProtectedPropertiesForIblock($iblockId, [self::SYSTEM_FIELD_ELEMENT_TYPE]);
-
         if (empty($protectedProps)) {
             return true;
         }
@@ -236,6 +236,21 @@ class IblockLockHandler
             
             if(self::isSystemField($propCode)){
                 $currentValue = $currentEl[substr($propCode, strlen(self::SYSTEM_FIELD_ELEMENT_TYPE)+1)] ?? '';
+            }elseif(self::isElementSection($propCode)){
+                $allSections = [];
+                if($currentEl['IBLOCK_SECTION_ID']){
+                    $allSections[] = $currentEl['IBLOCK_SECTION_ID'];
+                }
+                $r = \Bitrix\Iblock\SectionElementTable::getList([
+                    "select"=>["IBLOCK_SECTION_ID"],
+                    'filter'=>['IBLOCK_ELEMENT_ID'=>$arFields['ID']],
+                    'order'=>['IBLOCK_SECTION_ID'=>'asc']
+                ]);
+                while($sectData = $r->fetch()){
+                    if(!in_array($sectData['IBLOCK_SECTION_ID'], $allSections))
+                        $allSections[] = $sectData['IBLOCK_SECTION_ID'];
+                }
+                $currentValue = $allSections;
             }else{
                 $propId = self::getPropertyIdByCode($iblockId, $propCode);
                 if (!$propId) {
@@ -310,12 +325,17 @@ class IblockLockHandler
                 if(self::isSystemField($propCode)){
                     $propsToRestoreSys[substr($propCode, strlen(self::SYSTEM_FIELD_ELEMENT_TYPE)+1)] = $value;
                 }
+                if(self::isElementSection($propCode)){
+                    if(!empty($value) && isset($value[0])){
+                        $propsToRestoreSys['IBLOCK_SECTION_ID'] = $value[0];
+                        $propsToRestoreSys['IBLOCK_SECTION'] = $value[0]===false ? [] : $value;
+                    }
+                }
                 $prop = self::getPropertyByCode($iblockId, $propCode);
                 if ($prop['PROPERTY_TYPE'] !== 'F') {
                     $propsToRestore[$propCode] = $value;
                 }
             }
-
             // Очищаем статическую память
             self::$savedValues = [];
             if(!empty($propsToRestore)){
@@ -667,7 +687,8 @@ class IblockLockHandler
             self::SYSTEM_FIELD_SECTION_CODE => 'Раздел: Символьный код',
             self::SYSTEM_FIELD_SECTION_IBLOCK_SECTION_ID => 'Раздел: Родительский раздел',
             self::SYSTEM_FIELD_ELEMENT_NAME => 'Элемент: Название',
-            self::SYSTEM_FIELD_ELEMENT_CODE => 'Элемент: Символьный код'
+            self::SYSTEM_FIELD_ELEMENT_CODE => 'Элемент: Символьный код',
+            self::SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID => 'Элемент: Привязка к разделам',
         ];
     }
 
@@ -684,6 +705,18 @@ class IblockLockHandler
             self::SYSTEM_FIELD_SECTION_IBLOCK_SECTION_ID,
             self::SYSTEM_FIELD_ELEMENT_NAME,
             self::SYSTEM_FIELD_ELEMENT_CODE
+        ]);
+    }
+
+    /**
+     * Проверить, является ли поле системным
+     * @param string $fieldCode Код поля
+     * @return bool
+     */
+    public static function isElementSection($fieldCode)
+    {
+        return in_array($fieldCode, [
+            self::SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID
         ]);
     }
 

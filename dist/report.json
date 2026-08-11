@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "requestId": "awz.lockfieldsup1c-1786464743",
+  "data": {
+    "vulnerabilities": [],
+    "summary": "Обнаружено 0 уязвимостей в 0 файлах при анализе 52 файлов модуля. Модуль использует правильные паттерны безопасности: Authentication filter на контроллерах, CSRF защита на AJAX действиях, check_bitrix_sessid() на POST запросах, AccessController для проверки прав. Сигнал OS command (exec()) в lib/access/model/usermodel.php оказался ложным срабатыванием - это метод DatabaseQueryExec БД, а не OS команда.",
+    "scannedFiles": 52,
+    "riskLevel": "none",
+    "auditedFiles": [
+      "lib/api/controller.php",
+      "options.php",
+      "lib/handlers.php",
+      "lib/iblocklockhandler.php",
+      "install/components/lockfieldsup1c.config.permissions/ajax.php",
+      "lib/access/handlers.php",
+      "lib/access/model/usermodel.php",
+      "lib/access/custom/actiondictionary.php"
+    ]
+  }
+}

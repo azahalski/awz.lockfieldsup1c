@@ -18,9 +18,11 @@ class IblockLockHandler
     // Системные поля
     const SYSTEM_FIELD_SECTION_NAME = 'SECTION_NAME';
     const SYSTEM_FIELD_SECTION_CODE = 'SECTION_CODE';
+    const SYSTEM_FIELD_SECTION_ACTIVE = 'SECTION_ACTIVE';
     const SYSTEM_FIELD_SECTION_IBLOCK_SECTION_ID = 'SECTION_IBLOCK_SECTION_ID';
     const SYSTEM_FIELD_ELEMENT_NAME = 'ELEMENT_NAME';
     const SYSTEM_FIELD_ELEMENT_CODE = 'ELEMENT_CODE';
+    const SYSTEM_FIELD_ELEMENT_ACTIVE = 'ELEMENT_ACTIVE';
     const SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID = 'ELEMENT_IBLOCK_SECTION_ID';
 
     const SYSTEM_FIELD_SECTION_TYPE = 'section';
@@ -683,9 +685,11 @@ class IblockLockHandler
     public static function getSystemFields(int $iblockId = 0)
     {
         return [
+            self::SYSTEM_FIELD_SECTION_ACTIVE => 'Раздел: Активность',
             self::SYSTEM_FIELD_SECTION_NAME => 'Раздел: Название',
             self::SYSTEM_FIELD_SECTION_CODE => 'Раздел: Символьный код',
             self::SYSTEM_FIELD_SECTION_IBLOCK_SECTION_ID => 'Раздел: Родительский раздел',
+            self::SYSTEM_FIELD_ELEMENT_ACTIVE => 'Элемент: Активность',
             self::SYSTEM_FIELD_ELEMENT_NAME => 'Элемент: Название',
             self::SYSTEM_FIELD_ELEMENT_CODE => 'Элемент: Символьный код',
             self::SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID => 'Элемент: Привязка к разделам',
@@ -700,9 +704,11 @@ class IblockLockHandler
     public static function isSystemField($fieldCode)
     {
         return in_array($fieldCode, [
+            self::SYSTEM_FIELD_SECTION_ACTIVE,
             self::SYSTEM_FIELD_SECTION_NAME,
             self::SYSTEM_FIELD_SECTION_CODE,
             self::SYSTEM_FIELD_SECTION_IBLOCK_SECTION_ID,
+            self::SYSTEM_FIELD_ELEMENT_ACTIVE,
             self::SYSTEM_FIELD_ELEMENT_NAME,
             self::SYSTEM_FIELD_ELEMENT_CODE
         ]);

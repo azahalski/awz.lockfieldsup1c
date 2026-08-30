@@ -1,34 +1,26 @@
 {
   "schema_version": "1.0",
-  "module": {
-    "code": "awz.lockfieldsup1c"
-  },
+  "module": "awz.lockfieldsup1c",
   "current_state": {
-    "status": "ready_for_submission",
-    "last_run_id": "awz.lockfieldsup1c-1786464743",
-    "archive_sha256": null,
-    "open_findings": 0,
-    "blocking_findings_open": 0,
-    "false_positive_findings": 0,
-    "accepted_risk_findings": 0,
-    "fixed_findings": 0,
-    "removed_findings": 0,
-    "total_findings": 0
+    "status": "clean",
+    "blockingFindings": 0,
+    "openFindings": 0,
+    "lastScanDate": "2026-08-30T22:03:13Z"
   },
   "runs": [
     {
-      "run_id": "awz.lockfieldsup1c-1786464743",
-      "created_at": "2026-08-11T16:13:14+00:00",
+      "run_id": "awz.lockfieldsup1c-1788116593",
+      "scan_date": "2026-08-30T22:03:13Z",
       "archive_sha256": null,
-      "scanner_request_id": "awz.lockfieldsup1c-1786464743",
-      "input_summary": "Обнаружено 0 уязвимостей в 0 файлах при анализе 52 файлов модуля. Модуль использует правильные паттерны безопасности: Authentication filter на контроллерах, CSRF защита на AJAX действиях, check_bitrix_sessid() на POST запросах, AccessController для проверки прав. Сигнал OS command (exec()) в lib/access/model/usermodel.php оказался ложным срабатыванием - это метод DatabaseQueryExec БД, а не OS команда.",
+      "scanner_request_id": "awz.lockfieldsup1c-1788116593",
+      "input_summary": "Обнаружено 0 уязвимостей в 0 файлах при анализе 52 файлов модуля.",
       "summary": {
         "current_scan_findings": 0,
-        "severity_counts": {},
-        "new_findings": 0,
-        "still_open_findings": 0,
-        "reopened_findings": 0,
-        "resolved_since_previous_run": 0
+        "severity_counts": {
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        }
       }
     }
   ],

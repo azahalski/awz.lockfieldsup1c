@@ -151,7 +151,7 @@ $tabControl->Begin();
                                             <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_IBLOCK')?></option>
                                             <?foreach(IblockLockHandler::getIblocks() as $ib):?>
                                                 <option value="<?=$ib['ID']?>" <?=$ib['ID'] == $config['iblock_id'] ? 'selected' : ''?>>
-                                                    <?=$ib['NAME']?> [<?=$ib['ID']?>]
+                                                    [<?=$ib['ID']?>] <?=$ib['NAME']?>
                                                 </option>
                                             <?endforeach;?>
                                         </select>
@@ -164,7 +164,7 @@ $tabControl->Begin();
                                             ?>
                                             <?foreach($properties as $prop):?>
                                                 <option value="<?=$prop['CODE']?>" <?=$prop['CODE'] == $config['property_code'] ? 'selected' : ''?>>
-                                                    <?=$prop['NAME']?> [<?=$prop['CODE']?>]
+                                                    [<?=$prop['CODE']?>] <?=$prop['NAME']?>
                                                 </option>
                                             <?endforeach;?>
                                         </select>
@@ -226,7 +226,7 @@ $tabControl->Begin();
                     <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_IBLOCK')?></option>
                     <?foreach(IblockLockHandler::getIblocks() as $ib):?>
                         <option value="<?=$ib['ID']?>">
-                            <?=$ib['NAME']?> [<?=$ib['ID']?>]
+                            [<?=$ib['ID']?>] <?=$ib['NAME']?>
                         </option>
                     <?endforeach;?>
                 </select>
@@ -286,7 +286,7 @@ $tabControl->Begin();
                 response.data.forEach(function(prop) {
                     var option = document.createElement('option');
                     option.value = prop.CODE;
-                    option.textContent = prop.NAME + ' [' + prop.CODE + ']';
+                    option.textContent = '[' + prop.CODE + '] ' + prop.NAME;
                     propSelect.appendChild(option);
                 });
             }

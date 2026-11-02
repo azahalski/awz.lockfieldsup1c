@@ -24,6 +24,10 @@ class IblockLockHandler
     const SYSTEM_FIELD_ELEMENT_CODE = 'ELEMENT_CODE';
     const SYSTEM_FIELD_ELEMENT_ACTIVE = 'ELEMENT_ACTIVE';
     const SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID = 'ELEMENT_IBLOCK_SECTION_ID';
+    const SYSTEM_FIELD_ELEMENT_DETAIL_TEXT = 'ELEMENT_DETAIL_TEXT';
+    const SYSTEM_FIELD_ELEMENT_DETAIL_TEXT_TYPE = 'ELEMENT_DETAIL_TEXT_TYPE';
+    const SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT = 'ELEMENT_PREVIEW_TEXT';
+    const SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT_TYPE = 'ELEMENT_PREVIEW_TEXT_TYPE';
 
     const SYSTEM_FIELD_SECTION_TYPE = 'section';
     const SYSTEM_FIELD_ELEMENT_TYPE = 'element';
@@ -693,6 +697,10 @@ class IblockLockHandler
             self::SYSTEM_FIELD_ELEMENT_NAME => 'Элемент: Название',
             self::SYSTEM_FIELD_ELEMENT_CODE => 'Элемент: Символьный код',
             self::SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID => 'Элемент: Привязка к разделам',
+            self::SYSTEM_FIELD_ELEMENT_DETAIL_TEXT => 'Элемент: Описание',
+            self::SYSTEM_FIELD_ELEMENT_DETAIL_TEXT_TYPE => 'Элемент: Тип описания',
+            self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT => 'Элемент: Анонс',
+            self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT_TYPE => 'Элемент: Тип анонса',
         ];
     }
 
@@ -710,7 +718,12 @@ class IblockLockHandler
             self::SYSTEM_FIELD_SECTION_IBLOCK_SECTION_ID,
             self::SYSTEM_FIELD_ELEMENT_ACTIVE,
             self::SYSTEM_FIELD_ELEMENT_NAME,
-            self::SYSTEM_FIELD_ELEMENT_CODE
+            self::SYSTEM_FIELD_ELEMENT_CODE,
+            self::SYSTEM_FIELD_ELEMENT_IBLOCK_SECTION_ID,
+            self::SYSTEM_FIELD_ELEMENT_DETAIL_TEXT,
+            self::SYSTEM_FIELD_ELEMENT_DETAIL_TEXT_TYPE,
+            self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT,
+            self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT_TYPE
         ]);
     }
 

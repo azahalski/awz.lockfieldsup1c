@@ -3,6 +3,7 @@ namespace Awz\Lockfieldsup1c;
 
 use Bitrix\Main\Loader;
 use Bitrix\Main\Config\Option;
+use Awz\Lockfieldsup1c\Logger;
 use Bitrix\Main\Event;
 use Bitrix\Main\EventManager;
 
@@ -292,6 +293,13 @@ class IblockLockHandler
 
                 if ($currentValue !== null) {
                     self::$savedValues[$propCode] = $currentValue;
+                    Logger::info('Lock element property: old value saved', [
+                        'element_id' => (int)$arFields['ID'],
+                        'iblock_id' => $iblockId,
+                        'prop_code' => $propCode,
+                        'lock_type' => $lockType,
+                        'value' => $currentValue
+                    ]);
                 }
             }
         }
@@ -356,6 +364,14 @@ class IblockLockHandler
                 self::$lockElements[$arFields['ID']] = true;
                 $el = new \CIblockElement();
                 $el->Update($arFields['ID'], $propsToRestoreSys);
+            }
+            if(!empty($propsToRestore) || !empty($propsToRestoreSys)){
+                Logger::info('Restore element properties after update', [
+                    'element_id' => (int)$arFields['ID'],
+                    'iblock_id' => $iblockId,
+                    'props' => array_keys($propsToRestore),
+                    'system_fields' => array_keys($propsToRestoreSys)
+                ]);
             }
         }
 
@@ -544,6 +560,7 @@ class IblockLockHandler
         $moduleId = 'awz.lockfieldsup1c';
         Option::set($moduleId, 'LOCKED_PROPERTIES', json_encode($properties), '');
         self::$protectedProperties = null; // Сбрасываем кеш
+        Logger::info('Lock settings saved', ['rules_count' => count($properties)]);
     }
 
     /**
@@ -620,6 +637,13 @@ class IblockLockHandler
             if ($needSave) {
                 if ($currentValue !== null) {
                     self::$savedSectionValues[$propCode] = $currentValue;
+                    Logger::info('Lock section property: old value saved', [
+                        'section_id' => (int)$arFields['ID'],
+                        'iblock_id' => $iblockId,
+                        'prop_code' => $propCode,
+                        'lock_type' => $lockType,
+                        'value' => $currentValue
+                    ]);
                 }
             }
         }
@@ -660,6 +684,11 @@ class IblockLockHandler
                 self::$lockSections[$arFields['ID']] = true;
                 $sect = new \CIblockSection();
                 $sect->Update($arFields['ID'], $propsToRestoreSys);
+                Logger::info('Restore section properties after update', [
+                    'section_id' => (int)$arFields['ID'],
+                    'iblock_id' => $iblockId,
+                    'system_fields' => array_keys($propsToRestoreSys)
+                ]);
             }
         }
 

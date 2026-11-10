@@ -70,6 +70,10 @@ if ($request->getRequestMethod()==='POST' && AccessController::isEditSettings() 
     
     // Сохранение опции включения модуля
     Option::set($module_id, 'enabled', $enabled ? 'Y' : 'N', '');
+
+    // Сохранение опции журналирования в журнал событий (fallback-лог)
+    Option::set($module_id, 'ENABLE_JOURNAL_LOG', $request->get('enable_journal_log') === 'Y' ? 'Y' : 'N', '');
+    \Awz\Lockfieldsup1c\Logger::$journalEnabled = null;
 }
 
 // Получаем текущие настройки
@@ -102,6 +106,22 @@ $tabControl->Begin();
                     <input type="checkbox" name="module_enabled" value="Y" <?=Option::get($module_id, 'enabled', 'Y') === 'Y' ? 'checked' : ''?>>
                     <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_MODULE_ENABLED')?>
                 </label>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" style="padding-bottom:1rem;">
+                <label>
+                    <input type="checkbox" name="enable_journal_log" value="Y" <?=Option::get($module_id, 'ENABLE_JOURNAL_LOG', 'N') === 'Y' ? 'checked' : ''?>>
+                    <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_ENABLE_JOURNAL_LOG')?>
+                </label>
+                <div style="padding:0.5rem 0;">
+                    <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_JOURNAL_LOG_DESC')?>
+                    <br>
+                    <a href="/bitrix/admin/event_log.php?set_filter=Y&find_module_id=<?=$module_id?>&find_type=audit_type&find_audit_type_str=AWZ_LOCKFIELDSUP1C" target="_blank">
+                        <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_JOURNAL_LOG_LINK')?>
+                    </a>
+                </div>
             </td>
         </tr>
 

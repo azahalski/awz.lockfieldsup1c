@@ -3,6 +3,7 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admi
 
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Config\Configuration;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Application;
 use Bitrix\Main\UI\Extension;
@@ -73,11 +74,45 @@ if ($request->getRequestMethod()==='POST' && AccessController::isEditSettings() 
 
     // Сохранение опции журналирования в журнал событий (fallback-лог)
     Option::set($module_id, 'ENABLE_JOURNAL_LOG', $request->get('enable_journal_log') === 'Y' ? 'Y' : 'N', '');
-    \Awz\Lockfieldsup1c\Logger::$journalEnabled = null;
+    //\Awz\Lockfieldsup1c\Logger::$journalEnabled = null;
+
+    // Включение PSR-лога (файл с ротацией 20Мб) через .settings.php
+    // constructorParams - только массив (без closure), иначе var_export при сохранении сломает файл
+    $psrEnabled = $request->get('enable_psr_log') === 'Y';
+    try {
+        $config = Configuration::getInstance();
+        $loggersValue = (array)($config->get('loggers') ?? []);
+        if (isset($loggersValue['value']) && is_array($loggersValue['value'])) {
+            $loggersValue = $loggersValue['value'];
+        }
+        if ($psrEnabled) {
+            $loggersValue['awz.lockfieldsup1c'] = [
+                'className' => '\Bitrix\Main\Diag\FileLogger',
+                'constructorParams' => [$_SERVER['DOCUMENT_ROOT'].'/local/logs/awz.lockfieldsup1c.log', 20*1024*1024],
+                'level' => \Psr\Log\LogLevel::DEBUG
+            ];
+        } else {
+            unset($loggersValue['awz.lockfieldsup1c']);
+        }
+        // add() сам оборачивает в ['value'=>..., 'readonly'=>...], передаем только массив логгеров
+        $config['loggers'] = $loggersValue;
+        $config->saveConfiguration();
+    } catch (\Throwable $e) {
+    }
 }
 
 // Получаем текущие настройки
 $currentLockedProps = IblockLockHandler::getLockedProperties();
+
+try {
+    $loggersCfg = (array)(Configuration::getInstance()->get('loggers') ?? []);
+    if (isset($loggersCfg['value']) && is_array($loggersCfg['value'])) {
+        $loggersCfg = $loggersCfg['value'];
+    }
+    $currentPsrLogger = isset($loggersCfg['awz.lockfieldsup1c']);
+} catch (\Throwable $e) {
+    $currentPsrLogger = false;
+}
 
 $aTabs = array();
 
@@ -121,6 +156,18 @@ $tabControl->Begin();
                     <a href="/bitrix/admin/event_log.php?set_filter=Y&find_module_id=<?=$module_id?>&find_type=audit_type&find_audit_type_str=AWZ_LOCKFIELDSUP1C" target="_blank">
                         <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_JOURNAL_LOG_LINK')?>
                     </a>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" style="padding-bottom:1rem;">
+                <label>
+                    <input type="checkbox" name="enable_psr_log" value="Y" <?=isset($currentPsrLogger) && $currentPsrLogger ? 'checked' : ''?>>
+                    <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_ENABLE_PSR_LOG')?>
+                </label>
+                <div style="padding:0.5rem 0;">
+                    <?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_PSR_LOG_DESC')?>
                 </div>
             </td>
         </tr>

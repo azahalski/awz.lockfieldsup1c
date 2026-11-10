@@ -5,15 +5,15 @@
   },
   "current_state": {
     "status": "needs_review",
-    "last_run_id": "awz.lockfieldsup1c-1794309834",
+    "last_run_id": "awz.lockfieldsup1c-1794312350",
     "archive_sha256": null,
     "open_findings": 1,
     "blocking_findings_open": 0,
     "false_positive_findings": 0,
     "accepted_risk_findings": 0,
-    "fixed_findings": 0,
+    "fixed_findings": 1,
     "removed_findings": 0,
-    "total_findings": 1
+    "total_findings": 2
   },
   "runs": [
     {
@@ -32,6 +32,23 @@
         "reopened_findings": 0,
         "resolved_since_previous_run": 0
       }
+    },
+    {
+      "run_id": "awz.lockfieldsup1c-1794312350",
+      "created_at": "2026-11-10T09:06:52+00:00",
+      "archive_sha256": null,
+      "scanner_request_id": "awz.lockfieldsup1c-1794312350",
+      "input_summary": "Обнаружено 1 уязвимость в 1 файле при анализе 53 файлов модуля. Максимальная severity: medium. Прежняя находка (XSS в options.php, строки 173-189,248-251) воспроизводится в текущем коде — экранирование не добавлено, актуальные строки 219-223,232-236,294-298. Прочие recon-сигналы отклонены: ->exec() в usermodel.php — это ORM-методы, а не OS-команды; SQL в lib/access/handlers.php строится из приведённых к int значений; контроллеры имеют Authentication/Csrf prefilters и проверки прав AccessController.",
+      "summary": {
+        "current_scan_findings": 1,
+        "severity_counts": {
+          "medium": 1
+        },
+        "new_findings": 1,
+        "still_open_findings": 0,
+        "reopened_findings": 0,
+        "resolved_since_previous_run": 1
+      }
     }
   ],
   "findings": [
@@ -40,18 +57,15 @@
       "fingerprint": "07772cb70671559b73146c40f06dd4b9",
       "type": "Cross-Site Scripting",
       "severity": "medium",
-      "status": "open",
+      "status": "fixed",
       "first_seen_run_id": "awz.lockfieldsup1c-1794309834",
       "last_seen_run_id": "awz.lockfieldsup1c-1794309834",
-      "resolved_run_id": null,
+      "resolved_run_id": "awz.lockfieldsup1c-1794312350",
       "original_location": {
         "file": "options.php",
         "line": "173-189,248-251"
       },
-      "current_location": {
-        "file": "options.php",
-        "line": "173-189,248-251"
-      },
+      "current_location": null,
       "latest_vulnerability": {
         "file": "options.php",
         "line": "173-189,248-251",
@@ -81,6 +95,68 @@
           "location": {
             "file": "options.php",
             "line": "173-189,248-251"
+          },
+          "status": "open"
+        },
+        {
+          "run_id": "awz.lockfieldsup1c-1794312350",
+          "event": "resolved",
+          "at": "2026-11-10T09:06:52+00:00",
+          "status": "fixed"
+        }
+      ],
+      "resolution": {
+        "type": "not_reproduced_after_rescan",
+        "resolved_in_run": "awz.lockfieldsup1c-1794312350",
+        "reason": "The reviewed scan no longer reports a matching finding for the current archive."
+      }
+    },
+    {
+      "journal_finding_id": "JF-00002",
+      "fingerprint": "c7f4a0841be27da2d714d2112e872a8f",
+      "type": "Cross-Site Scripting",
+      "severity": "medium",
+      "status": "open",
+      "first_seen_run_id": "awz.lockfieldsup1c-1794312350",
+      "last_seen_run_id": "awz.lockfieldsup1c-1794312350",
+      "resolved_run_id": null,
+      "original_location": {
+        "file": "options.php",
+        "line": "219-223,232-236,294-298"
+      },
+      "current_location": {
+        "file": "options.php",
+        "line": "219-223,232-236,294-298"
+      },
+      "latest_vulnerability": {
+        "file": "options.php",
+        "line": "219-223,232-236,294-298",
+        "type": "Cross-Site Scripting",
+        "severity": "medium",
+        "description": "Подтверждена (межпривилегиальный stored XSS): в админ-странице настроек модуля (options.php) значения из БД выводятся в HTML без экранирования. В цикле по IblockLockHandler::getIblocks() в option-теги вставляются голые <?= $ib['ID'] ?> и <?= $ib['NAME'] ?> (строки 220-221 в основном списке и строки 295-296 в JS-шаблоне addLockRow), а в списке свойств инфоблока — <?= $prop['CODE'] ?> и <?= $prop['NAME'] ?> (строки 233-234). Имена инфоблоков и свойства (NAME, CODE) создаются/переименовываются операторами с правом редактирования контента инфоблоков, которые могут не иметь права настройки модуля (ACTION_SETT_EDIT). Сценарий: контент-редактор создаёт инфоблок с именем вида '<img src=x onerror=...>' → администратор открывает настройки awz.lockfieldsup1c → payload исполняется в сессии администратора в админ-зоне. В отличие от соседних полей request_params/user_ids (экранированы через htmlspecialcharsbx на строках 252, 255), имена инфоблоков/свойств экранирования не имеют. Вход через AJAX getProperties экранирован на клиенте (textContent), но основной список рендерится на сервере без экранирования.",
+        "recommendation": "Экранировать все выводимые из БД значения в HTML-контексте через htmlspecialcharsbx (для option value и текста). Для JS-шаблона addLockRow — экранировать или использовать CUtil::PhpToJSObject при передаче данных. Ввести привычку экранирования любых полей из БД, даже «админских».",
+        "fix": "Before:\n<option value=\"<?=$ib['ID']?>\" ...>\n    [<?=$ib['ID']?>] <?=$ib['NAME']?>\n</option>\n...\n<option value=\"<?=$prop['CODE']?>\" ...>\n    [<?=$prop['CODE']?>] <?=$prop['NAME']?>\n</option>\n\nAfter:\n<option value=\"<?=htmlspecialcharsbx($ib['ID'])?>\" ...>\n    [<?=htmlspecialcharsbx($ib['ID'])?>] <?=htmlspecialcharsbx($ib['NAME'])?>\n</option>\n...\n<option value=\"<?=htmlspecialcharsbx($prop['CODE'])?>\" ...>\n    [<?=htmlspecialcharsbx($prop['CODE'])?>] <?=htmlspecialcharsbx($prop['NAME'])?>\n</option>\n\n(аналогично в JS-шаблоне addLockRow, строки 294-298 — вынести список инфоблоков в JS-переменную через CUtil::PhpToJSObject или экранировать каждый вывод).",
+        "reviewed": {
+          "oldSeverity": "medium",
+          "newSeverity": "medium",
+          "changed": false,
+          "category": "cross-privilege-stored-xss",
+          "versionScope": "current",
+          "version": "current",
+          "currentVersionRelevance": "present-in-current-scan",
+          "action": "fix",
+          "confidence": "medium",
+          "rationale": "Set to medium because data controlled by a lower-privileged actor appears to execute in an administrator/moderation/order interface."
+        }
+      },
+      "events": [
+        {
+          "run_id": "awz.lockfieldsup1c-1794312350",
+          "event": "detected",
+          "at": "2026-11-10T09:06:52+00:00",
+          "location": {
+            "file": "options.php",
+            "line": "219-223,232-236,294-298"
           },
           "status": "open"
         }

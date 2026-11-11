@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "requestId": "awz.lockfieldsup1c-1794410457",
+  "data": {
+    "vulnerabilities": [
+      {
+        "file": "lib/access/handlers.php",
+        "line": "23",
+        "type": "SQL Injection",
+        "severity": "medium",
+        "description": "Подозрение: в обработчике OnAfterUserUpdate переменная $userId берётся из $arFields[\"ID\"] без приведения к int и попадает в строку запроса через конкатенацию в массив sqlValues (строка 24). Имя таблицы и структура запроса генерируются CDBSqlHelper::getInsertIgnore, однако значения вставляются как строковые литералы в формат '($userId,\\'user\\',\\'U$userId\\')'. В текущей архитектике Bitrix $arFields[\"ID\"] из события OnAfterUserUpdate должен всегда приходить от ядра как число, но отсутствие явного (int) — потенциальный вектор SQL-инъекции, если внешний код сможет манипулировать содержимым arFields.",
+        "recommendation": "Привести $arFields[\"ID\"] к int явно перед использованием: `$userId = (int)$arFields[\"ID\"];` (строка 23). Это уберёт риск при любых нештатных условиях передачи данных в событие.",
+        "fix": "Before:\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $userId = (int) $arFields[\"ID\"];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';\n\nAfter:\n        $userId = (int)$arFields['ID'];\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';"
+      }
+    ],
+    "summary": "Обнаружено 1 подозрение в 1 файле при анализе 19 файлов модуля (53 целевых файла по recon). Модуль awz.lockfieldsup1c демонстрирует хорошую практику безопасности: все точки входа защищены Authentication/CSRF/Permission-проверками, входные данные экранируются через htmlspecialcharsbx, нет eval/unserialize/exec с пользовательским вводом, нет хардкод-секретов. Найденное — отсутствующий (int) cast для ID пользователя в SQL-конструкции обработчика событий.",
+    "scannedFiles": 53,
+    "riskLevel": "medium",
+    "auditedFiles": [
+      "admin/menu.php",
+      "include.php",
+      "install/index.php",
+      "install/components/lockfieldsup1c.config.permissions/ajax.php",
+      "lib/access/accesscontroller.php",
+      "lib/access/component/configpermissions.php",
+      "lib/access/custom/actiondictionary.php",
+      "lib/access/custom/componentconfig.php",
+      "lib/access/custom/helper.php",
+      "lib/access/handlers.php",
+      "lib/access/model/basemodel.php",
+      "lib/access/model/usermodel.php",
+      "lib/access/permission/roleutil.php",
+      "lib/access/tables/permission.php",
+      "lib/api/controller.php",
+      "lib/handlers.php",
+      "lib/iblocklockhandler.php",
+      "lib/logger.php",
+      "options.php"
+    ]
+  }
+}

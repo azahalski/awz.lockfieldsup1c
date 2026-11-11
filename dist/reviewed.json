@@ -1,50 +1,56 @@
 {
   "success": true,
-  "requestId": "awz.lockfieldsup1c-1794312350",
+  "requestId": "awz.lockfieldsup1c-1794410457",
   "data": {
     "vulnerabilities": [
       {
-        "file": "options.php",
-        "line": "219-223,232-236,294-298",
-        "type": "Cross-Site Scripting",
+        "file": "lib/access/handlers.php",
+        "line": "23",
+        "type": "SQL Injection",
         "severity": "medium",
-        "description": "Подтверждена (межпривилегиальный stored XSS): в админ-странице настроек модуля (options.php) значения из БД выводятся в HTML без экранирования. В цикле по IblockLockHandler::getIblocks() в option-теги вставляются голые <?= $ib['ID'] ?> и <?= $ib['NAME'] ?> (строки 220-221 в основном списке и строки 295-296 в JS-шаблоне addLockRow), а в списке свойств инфоблока — <?= $prop['CODE'] ?> и <?= $prop['NAME'] ?> (строки 233-234). Имена инфоблоков и свойства (NAME, CODE) создаются/переименовываются операторами с правом редактирования контента инфоблоков, которые могут не иметь права настройки модуля (ACTION_SETT_EDIT). Сценарий: контент-редактор создаёт инфоблок с именем вида '<img src=x onerror=...>' → администратор открывает настройки awz.lockfieldsup1c → payload исполняется в сессии администратора в админ-зоне. В отличие от соседних полей request_params/user_ids (экранированы через htmlspecialcharsbx на строках 252, 255), имена инфоблоков/свойств экранирования не имеют. Вход через AJAX getProperties экранирован на клиенте (textContent), но основной список рендерится на сервере без экранирования.",
-        "recommendation": "Экранировать все выводимые из БД значения в HTML-контексте через htmlspecialcharsbx (для option value и текста). Для JS-шаблона addLockRow — экранировать или использовать CUtil::PhpToJSObject при передаче данных. Ввести привычку экранирования любых полей из БД, даже «админских».",
-        "fix": "Before:\n<option value=\"<?=$ib['ID']?>\" ...>\n    [<?=$ib['ID']?>] <?=$ib['NAME']?>\n</option>\n...\n<option value=\"<?=$prop['CODE']?>\" ...>\n    [<?=$prop['CODE']?>] <?=$prop['NAME']?>\n</option>\n\nAfter:\n<option value=\"<?=htmlspecialcharsbx($ib['ID'])?>\" ...>\n    [<?=htmlspecialcharsbx($ib['ID'])?>] <?=htmlspecialcharsbx($ib['NAME'])?>\n</option>\n...\n<option value=\"<?=htmlspecialcharsbx($prop['CODE'])?>\" ...>\n    [<?=htmlspecialcharsbx($prop['CODE'])?>] <?=htmlspecialcharsbx($prop['NAME'])?>\n</option>\n\n(аналогично в JS-шаблоне addLockRow, строки 294-298 — вынести список инфоблоков в JS-переменную через CUtil::PhpToJSObject или экранировать каждый вывод).",
+        "description": "Подозрение: в обработчике OnAfterUserUpdate переменная $userId берётся из $arFields[\"ID\"] без приведения к int и попадает в строку запроса через конкатенацию в массив sqlValues (строка 24). Имя таблицы и структура запроса генерируются CDBSqlHelper::getInsertIgnore, однако значения вставляются как строковые литералы в формат '($userId,\\'user\\',\\'U$userId\\')'. В текущей архитектике Bitrix $arFields[\"ID\"] из события OnAfterUserUpdate должен всегда приходить от ядра как число, но отсутствие явного (int) — потенциальный вектор SQL-инъекции, если внешний код сможет манипулировать содержимым arFields.",
+        "recommendation": "Привести $arFields[\"ID\"] к int явно перед использованием: `$userId = (int)$arFields[\"ID\"];` (строка 23). Это уберёт риск при любых нештатных условиях передачи данных в событие.",
+        "fix": "Before:\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $userId = (int) $arFields[\"ID\"];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';\n\nAfter:\n        $userId = (int)$arFields['ID'];\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';",
         "reviewed": {
           "oldSeverity": "medium",
           "newSeverity": "medium",
           "changed": false,
-          "category": "cross-privilege-stored-xss",
+          "category": "sql-injection",
           "versionScope": "current",
           "version": "current",
           "currentVersionRelevance": "present-in-current-scan",
-          "action": "fix",
+          "action": "parameterize-query",
           "confidence": "medium",
-          "rationale": "Set to medium because data controlled by a lower-privileged actor appears to execute in an administrator/moderation/order interface."
+          "rationale": "Kept as medium by default under the BUS Marketplace triage policy; raise only when exploit impact is proven beyond the journal text."
         }
       }
     ],
-    "summary": "Обнаружено 1 уязвимость в 1 файле при анализе 53 файлов модуля. Максимальная severity: medium. Прежняя находка (XSS в options.php, строки 173-189,248-251) воспроизводится в текущем коде — экранирование не добавлено, актуальные строки 219-223,232-236,294-298. Прочие recon-сигналы отклонены: ->exec() в usermodel.php — это ORM-методы, а не OS-команды; SQL в lib/access/handlers.php строится из приведённых к int значений; контроллеры имеют Authentication/Csrf prefilters и проверки прав AccessController.",
+    "summary": "Обнаружено 1 подозрение в 1 файле при анализе 19 файлов модуля (53 целевых файла по recon). Модуль awz.lockfieldsup1c демонстрирует хорошую практику безопасности: все точки входа защищены Authentication/CSRF/Permission-проверками, входные данные экранируются через htmlspecialcharsbx, нет eval/unserialize/exec с пользовательским вводом, нет хардкод-секретов. Найденное — отсутствующий (int) cast для ID пользователя в SQL-конструкции обработчика событий.",
     "scannedFiles": 53,
     "riskLevel": "medium",
     "auditedFiles": [
-      ".settings.php",
-      "include.php",
-      "options.php",
       "admin/menu.php",
+      "include.php",
       "install/index.php",
       "install/components/lockfieldsup1c.config.permissions/ajax.php",
+      "lib/access/accesscontroller.php",
+      "lib/access/component/configpermissions.php",
+      "lib/access/custom/actiondictionary.php",
+      "lib/access/custom/componentconfig.php",
+      "lib/access/custom/helper.php",
+      "lib/access/handlers.php",
+      "lib/access/model/basemodel.php",
+      "lib/access/model/usermodel.php",
+      "lib/access/permission/roleutil.php",
+      "lib/access/tables/permission.php",
+      "lib/api/controller.php",
       "lib/handlers.php",
       "lib/iblocklockhandler.php",
-      "lib/api/controller.php",
-      "lib/access/accesscontroller.php",
-      "lib/access/handlers.php",
-      "lib/access/component/configpermissions.php",
-      "lib/access/model/usermodel.php"
+      "lib/logger.php",
+      "options.php"
     ],
     "reviewSummary": {
-      "reviewedAt": "2026-11-10",
+      "reviewedAt": "2026-11-11",
       "method": "BUS-aware triage: preserve original finding fields except severity, add reviewed node with old severity and rationale.",
       "totals": {
         "vulnerabilities": 1,
@@ -66,7 +72,7 @@
           "medium": 1
         },
         "reviewedCategories": {
-          "cross-privilege-stored-xss": 1
+          "sql-injection": 1
         }
       },
       "historicalUpdatePackages": {

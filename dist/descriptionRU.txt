@@ -1,80 +1,66 @@
+[center][size=18pt][b]AWZ: Блокировщик свойств[/b][/size]
+[IMG WIDTH=225 HEIGHT=9]https://zahalski.dev/upload/awz.load.ai/lv1iyow5dj.png[/IMG][/center]
+[center]
+[TABLE][TR][TH][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=150 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/5bgfxic7b1.png[/IMG][/TH][TH][b]Блокировка обновления полей и свойств инфоблоков: правила по полям, параметрам запроса и пользователям.[/b][/TH][TH][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=150 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/5bgfxic7b1.png[/IMG][/TH][/TR][TR][TH][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/TH][/TR][TR][TH][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=150 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/5bgfxic7b1.png[/IMG][/TH][TH][color=#8b93b3]Значения восстанавливаются после обновления - данные остаются как было.[/color][/TH][TH][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=150 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/5bgfxic7b1.png[/IMG][/TH][/TR][/TABLE][/center]
+[center]
+[TABLE][TR][TH][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/q05kht0pbm.png[/IMG][/center]
 
-Модуль [b]AWZ: Блокировщик свойств[/b] предназначен для защиты свойств инфоблоков и разделов от нежелательного обновления при синхронизации данных из внешних источников (например, 1С).
+[center][b]Правила блокировки[/b][/center][color=#8b93b3]правило: инфоблок, поле или свойство, тип блокировки.[/color][/TH][TH][center][IMG WIDTH=10 HEIGHT=20]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/center][/TH][TH][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/4xug2x292c.png[/IMG][/center]
 
-[size=22pt][b]Основные возможности:[/b][/size]
-[list]
-[*][b]Защита свойств элементов инфоблоков[/b] — предотвращает изменение указанных свойств при обновлении элементов
-[*][b]Защита свойств разделов инфоблоков[/b] — аналогичная защита для разделов
-[*][b]Гибкая настройка правил[/b] — возможность создавать множественные правила блокировки для разных инфоблоков и свойств
-[*][b]Фильтрация по параметрам запроса[/b] — правила могут срабатывать только при определённых параметрах URL (например, только при импорте из 1С)
-[*][b]Фильтрация по пользователям[/b] — возможность указать, для каких пользователей действует правило (с поддержкой инверсии)
-[*][b]Защита системных полей[/b] — поддержка блокировки системных полей (Название, Символьный код, Родительский раздел)
-[/list]
+[center][b]Системные поля[/b][/center][color=#8b93b3]название, код, активность, разделы, описания и анонсы.[/color][/TH][/TR][TR][TH][center][IMG WIDTH=10 HEIGHT=20]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/center][/TH][TH][center][IMG WIDTH=10 HEIGHT=20]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/center][/TH][TH][center][IMG WIDTH=10 HEIGHT=20]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/center][/TH][/TR][TR][TH][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/9qo1nu68no.png[/IMG][/center]
 
-[size=22pt][b]Принцип работы[/b][/size]
-Модуль регистрирует обработчики событий Bitrix:
-[list]
-[*][code]OnBeforeIBlockElementUpdate[/code] — перед обновлением элемента запоминает текущие значения защищённых свойств
-[*][code]OnAfterIBlockElementUpdate[/code] — после обновления принудительно восстанавливает сохранённые значения
-[*][code]OnBeforeIBlockSectionUpdate[/code] — аналогично для разделов
-[*][code]OnAfterIBlockSectionUpdate[/code] — восстановление значений для разделов
-[/list]
+[center][b]Фильтр по запросу[/b][/center][color=#8b93b3]правило срабатывает при заданных параметрах URL.[/color][/TH][TH][center][IMG WIDTH=10 HEIGHT=20]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/center][/TH][TH][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/i4la61zftq.png[/IMG][/center]
 
-[size=22pt][b]Типы блокировки[/b][/size]
-[list]
-[*][b]Запретить любое обновление[/b] ([code]all[/code]) — свойство всегда остаётся неизменным при внешнем обновлении
-[/list]
+[center][b]Права доступа[/b][/center][color=#8b93b3]роли с просмотром и редактированием настроек и прав.[/color][/TH][/TR][/TABLE]
+[/center]
 
-[size=24pt][b]Настройки и конфигурация[/b][/size]
+[center][IMG WIDTH=800 HEIGHT=447]https://zahalski.dev/upload/awz.load.ai/wz72jnjrsm.png[/IMG][/center]
 
-[size=22pt][b]Общие настройки[/b][/size]
-[list]
-[*][b]Включить модуль защиты полей[/b] — глобальный переключатель активности модуля
-[/list]
+[center][size=18pt][b]От чего защищает модуль[/b][/size][/center]
+[center]
+[TABLE]
+[TR][TD][IMG WIDTH=135 HEIGHT=1]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/TD][TD][IMG WIDTH=135 HEIGHT=1]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][/TD][/TR]
+[TR][TD][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/ndey2i0of9.png[/IMG][/center][/TD][TD][center][b]Перезапись из 1С[/b][/center][/TD][/TR]
+[TR][TD][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/wizhjw69lf.png[/IMG][/center][/TD][TD][center][b]Слетевшие коды[/b][/center][/TD][/TR]
+[TR][TD][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/e7k0glpfh5.png[/IMG][/center][/TD][TD][center][b]Затёртые тексты[/b][/center][/TD][/TR]
+[TR][TD][center][IMG WIDTH=72 HEIGHT=72]https://zahalski.dev/upload/awz.load.ai/k6vfuqpc0o.png[/IMG][/center][/TD][TD][center][b]Случайные правки[/b][/center][/TD][/TR]
+[/TABLE]
+[/center]
 
-[size=22pt][b]Правила блокировки[/b][/size]
-Для каждого правила настраиваются следующие параметры:
 
-[list]
-[*][b]Инфоблок[/b] — Инфоблок, к которому применяется правило
-[*][b]Свойство[/b] — Символьный код свойства для блокировки (или системное поле)
-[*][b]Тип блокировки[/b] — [code]all[/code] — запретить любое обновление, [code]empty[/code] — разрешить только для пустых значений
-[*][b]Параметры запроса[/b] — Параметры URL через &, при наличии которых срабатывает правило. Пример: [code]type=catalog&mode=import[/code] для 1С
-[*][b]ID пользователей[/b] — Список ID пользователей через запятую. Символ ! в начале инвертирует список (правило действует для всех, кроме указанных)
-[/list]
+[center][size=18pt][b]Основные возможности модуля[/b][/size]
+[IMG WIDTH=225 HEIGHT=9]https://zahalski.dev/upload/awz.load.ai/lv1iyow5dj.png[/IMG][/center]
 
-[size=22pt][b]Системные поля, доступные для блокировки[/b][/size]
-[list]
-[*][code]SECTION_NAME[/code] — Раздел: Название
-[*][code]SECTION_CODE[/code] — Раздел: Символьный код
-[*][code]SECTION_IBLOCK_SECTION_ID[/code] — Раздел: Родительский раздел
-[*][code]ELEMENT_NAME[/code] — Элемент: Название
-[*][code]ELEMENT_CODE[/code] — Элемент: Символьный код
-[/list]
+[center][size=13pt][b]1. Правила по полям[/b][/size][/center]
+[center]
+[TABLE]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/20il03sbhw.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Правило: инфоблок, поле или свойство и тип блокировки[/TD][/TR]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/20il03sbhw.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Запрет любого обновления или разрешение обновлять только пустые значения[/TD][/TR]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/20il03sbhw.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Произвольные свойства с символьным кодом и 12 системных полей[/TD][/TR]
+[/TABLE]
+[/center]
 
-[size=22pt][b]Примеры использования[/b][/size]
+[center][IMG WIDTH=800 HEIGHT=447]https://zahalski.dev/upload/awz.load.ai/7codl0c6f5.png[/IMG][/center]
 
-[b]1. Запрет обновления свойства видео из 1С для инфоблока 5:[/b]
-[list]
-[*]Инфоблок: 5
-[*]Свойство: [code]VIDEO[/code]
-[*]Тип блокировки: Запретить любое обновление
-[*]Параметры запроса: [code]type=catalog&mode=import[/code]
-[/list]
+[center][size=13pt][b]2. Фильтры срабатывания[/b][/size][/center]
+[center]
+[TABLE]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/w6dlxyu77s.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Параметры запроса в URL, например type=catalog&mode=import для 1С[/TD][/TR]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/w6dlxyu77s.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Список ID пользователей, пустой список - правило для всех[/TD][/TR]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/w6dlxyu77s.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Инверсия списка: !1,2 - правило для всех, кроме указанных[/TD][/TR]
+[/TABLE]
+[/center]
 
-[b]2. Защита символьного кода для всех, кроме администратора:[/b]
-[list]
-[*]Инфоблок: нужный инфоблок
-[*]Свойство: [code]ELEMENT_CODE[/code]
-[*]Тип блокировки: Запретить любое обновление
-[*]ID пользователей: [code]!1[/code] (все, кроме пользователя с ID 1)
-[/list]
+[center][IMG WIDTH=800 HEIGHT=447]https://zahalski.dev/upload/awz.load.ai/k4hook0mfn.png[/IMG][/center]
 
-[size=24pt][b]Права доступа[/b][/size]
-Модуль поддерживает настройку прав доступа:
-[list]
-[*]Просмотр настроек
-[*]Редактирование настроек
-[*]Просмотр прав доступа
-[*]Редактирование прав доступа
-[/list]
+[center][size=13pt][b]3. Журнал и права доступа[/b][/size][/center]
+[center]
+[TABLE]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/7p95wsnssa.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Срабатывания правил фиксируются в журнале событий[/TD][/TR]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/7p95wsnssa.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]PSR-лог в файл с ротацией при 20 Мб[/TD][/TR]
+[TR][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG][IMG WIDTH=44 HEIGHT=44]https://zahalski.dev/upload/awz.load.ai/7p95wsnssa.png[/IMG][/TD][TD][IMG WIDTH=10 HEIGHT=10]https://zahalski.dev/upload/awz.load.ai/4zhdkguvu3.png[/IMG]Четыре права для ролей: просмотр и редактирование настроек и прав[/TD][/TR]
+[/TABLE]
+[/center]
+
+[center][IMG WIDTH=800 HEIGHT=447]https://zahalski.dev/upload/awz.load.ai/uzlgkrzxhl.png[/IMG][/center]
+

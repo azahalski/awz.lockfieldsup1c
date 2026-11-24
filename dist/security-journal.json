@@ -4,14 +4,14 @@
     "code": "awz.lockfieldsup1c"
   },
   "current_state": {
-    "status": "needs_review",
-    "last_run_id": "awz.lockfieldsup1c-1794410457",
+    "status": "ready_for_submission",
+    "last_run_id": "awz.lockfieldsup1c-1795559216",
     "archive_sha256": null,
-    "open_findings": 1,
+    "open_findings": 0,
     "blocking_findings_open": 0,
     "false_positive_findings": 0,
     "accepted_risk_findings": 0,
-    "fixed_findings": 0,
+    "fixed_findings": 1,
     "removed_findings": 0,
     "total_findings": 1
   },
@@ -32,6 +32,21 @@
         "reopened_findings": 0,
         "resolved_since_previous_run": 0
       }
+    },
+    {
+      "run_id": "awz.lockfieldsup1c-1795559216",
+      "created_at": "2026-11-24T22:29:43+00:00",
+      "archive_sha256": null,
+      "scanner_request_id": "awz.lockfieldsup1c-1795559216",
+      "input_summary": "Обнаружено 0 уязвимостей в 0 файлах при анализе 53 файлов модуля. Максимальная severity: none.",
+      "summary": {
+        "current_scan_findings": 0,
+        "severity_counts": {},
+        "new_findings": 0,
+        "still_open_findings": 0,
+        "reopened_findings": 0,
+        "resolved_since_previous_run": 1
+      }
     }
   ],
   "findings": [
@@ -40,18 +55,15 @@
       "fingerprint": "753d38dd60a745505b2fe9c2af713177",
       "type": "SQL Injection",
       "severity": "medium",
-      "status": "open",
+      "status": "fixed",
       "first_seen_run_id": "awz.lockfieldsup1c-1794410457",
       "last_seen_run_id": "awz.lockfieldsup1c-1794410457",
-      "resolved_run_id": null,
+      "resolved_run_id": "awz.lockfieldsup1c-1795559216",
       "original_location": {
         "file": "lib/access/handlers.php",
         "line": "23"
       },
-      "current_location": {
-        "file": "lib/access/handlers.php",
-        "line": "23"
-      },
+      "current_location": null,
       "latest_vulnerability": {
         "file": "lib/access/handlers.php",
         "line": "23",
@@ -59,19 +71,7 @@
         "severity": "medium",
         "description": "Подозрение: в обработчике OnAfterUserUpdate переменная $userId берётся из $arFields[\"ID\"] без приведения к int и попадает в строку запроса через конкатенацию в массив sqlValues (строка 24). Имя таблицы и структура запроса генерируются CDBSqlHelper::getInsertIgnore, однако значения вставляются как строковые литералы в формат '($userId,\\'user\\',\\'U$userId\\')'. В текущей архитектике Bitrix $arFields[\"ID\"] из события OnAfterUserUpdate должен всегда приходить от ядра как число, но отсутствие явного (int) — потенциальный вектор SQL-инъекции, если внешний код сможет манипулировать содержимым arFields.",
         "recommendation": "Привести $arFields[\"ID\"] к int явно перед использованием: `$userId = (int)$arFields[\"ID\"];` (строка 23). Это уберёт риск при любых нештатных условиях передачи данных в событие.",
-        "fix": "Before:\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $userId = (int) $arFields[\"ID\"];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';\n\nAfter:\n        $userId = (int)$arFields['ID'];\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';",
-        "reviewed": {
-          "oldSeverity": "medium",
-          "newSeverity": "medium",
-          "changed": false,
-          "category": "sql-injection",
-          "versionScope": "current",
-          "version": "current",
-          "currentVersionRelevance": "present-in-current-scan",
-          "action": "parameterize-query",
-          "confidence": "medium",
-          "rationale": "Kept as medium by default under the BUS Marketplace triage policy; raise only when exploit impact is proven beyond the journal text."
-        }
+        "fix": "Before:\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $userId = (int) $arFields[\"ID\"];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';\n\nAfter:\n        $userId = (int)$arFields['ID'];\n        while($row = $r->fetch()){\n            $id = (int) $row['GROUP_ID'];\n            $sqlValues[] = '('.$userId.',\\'group\\',\\'G'.$id.'\\')';\n        }\n        if($userId)\n            $sqlValues[] = '('.$userId.',\\'user\\',\\'U'.$userId.'\\')';"
       },
       "events": [
         {
@@ -83,8 +83,19 @@
             "line": "23"
           },
           "status": "open"
+        },
+        {
+          "run_id": "awz.lockfieldsup1c-1795559216",
+          "event": "resolved",
+          "at": "2026-11-24T22:29:43+00:00",
+          "status": "fixed"
         }
-      ]
+      ],
+      "resolution": {
+        "type": "not_reproduced_after_rescan",
+        "resolved_in_run": "awz.lockfieldsup1c-1795559216",
+        "reason": "The reviewed scan no longer reports a matching finding for the current archive."
+      }
     }
   ]
 }

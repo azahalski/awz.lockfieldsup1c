@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "requestId": "awz.lockfieldsup1c-1795559216",
+  "data": {
+    "vulnerabilities": [],
+    "summary": "Обнаружено 0 уязвимостей в 0 файлах при анализе 53 файлов модуля. Максимальная severity: none.",
+    "scannedFiles": 53,
+    "riskLevel": "none",
+    "auditedFiles": [
+      "include.php",
+      "options.php",
+      "admin/menu.php",
+      "install/index.php",
+      "install/solution.php",
+      "install/unstep.php",
+      "install/version.php",
+      "install/components/lockfieldsup1c.config.permissions/ajax.php",
+      "lib/handlers.php",
+      "lib/iblocklockhandler.php",
+      "lib/logger.php",
+      "lib/api/controller.php",
+      "lib/access/accesscontroller.php",
+      "lib/access/handlers.php",
+      "lib/access/model/usermodel.php",
+      "lib/access/model/basemodel.php",
+      "lib/access/custom/actiondictionary.php",
+      "lib/access/custom/componentconfig.php",
+      "lib/access/custom/permissiondictionary.php",
+      "lib/access/custom/roledictionary.php"
+    ]
+  }
+}

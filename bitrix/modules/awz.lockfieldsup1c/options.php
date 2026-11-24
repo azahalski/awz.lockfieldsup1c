@@ -106,10 +106,8 @@ $currentLockedProps = IblockLockHandler::getLockedProperties();
 
 try {
     $loggersCfg = (array)(Configuration::getInstance()->get('loggers') ?? []);
-    if (isset($loggersCfg['value']) && is_array($loggersCfg['value'])) {
-        $loggersCfg = $loggersCfg['value'];
-    }
-    $currentPsrLogger = isset($loggersCfg['awz.lockfieldsup1c']);
+    //echo'<pre>';print_r($loggersCfg);echo'</pre>';
+    $currentPsrLogger = is_array($loggersCfg) && isset($loggersCfg['awz.lockfieldsup1c']);
 } catch (\Throwable $e) {
     $currentPsrLogger = false;
 }
@@ -123,7 +121,7 @@ $aTabs[] = array(
     "TITLE" => Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_SECT3')
 );
 
-$saveUrl = $APPLICATION->GetCurPage(false).'?mid='.htmlspecialcharsbx($module_id).'&lang='.LANGUAGE_ID.'&mid_menu=1';
+$saveUrl = $APPLICATION->GetCurPage(false).'?mid='.htmlspecialcharsEx($module_id).'&lang='.LANGUAGE_ID.'&mid_menu=1';
 $tabControl = new CAdminTabControl("tabControl", $aTabs);
 $tabControl->Begin();
 ?>
@@ -218,7 +216,7 @@ $tabControl->Begin();
                                             <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_IBLOCK')?></option>
                                             <?foreach(IblockLockHandler::getIblocks() as $ib):?>
                                                 <option value="<?=$ib['ID']?>" <?=$ib['ID'] == $config['iblock_id'] ? 'selected' : ''?>>
-                                                    [<?=$ib['ID']?>] <?=$ib['NAME']?>
+                                                    [<?=$ib['ID']?>] <?=htmlspecialcharsEx($ib['NAME'])?>
                                                 </option>
                                             <?endforeach;?>
                                         </select>
@@ -231,7 +229,7 @@ $tabControl->Begin();
                                             ?>
                                             <?foreach($properties as $prop):?>
                                                 <option value="<?=$prop['CODE']?>" <?=$prop['CODE'] == $config['property_code'] ? 'selected' : ''?>>
-                                                    [<?=$prop['CODE']?>] <?=$prop['NAME']?>
+                                                    [<?=$prop['CODE']?>] <?=htmlspecialcharsEx($prop['NAME'])?>
                                                 </option>
                                             <?endforeach;?>
                                         </select>
@@ -249,10 +247,10 @@ $tabControl->Begin();
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="text" name="lock_request_params[]" value="<?=htmlspecialcharsbx($config['request_params'] ?? 'type=catalog&mode=import')?>" style="" placeholder="type=catalog&mode=import">
+                                        <input type="text" name="lock_request_params[]" value="<?=htmlspecialcharsEx($config['request_params'] ?? 'type=catalog&mode=import')?>" style="" placeholder="type=catalog&mode=import">
                                     </td>
                                     <td>
-                                        <input type="text" name="lock_user_ids[]" value="<?=htmlspecialcharsbx($config['user_ids'] ?? '')?>" style="" placeholder="">
+                                        <input type="text" name="lock_user_ids[]" value="<?=htmlspecialcharsEx($config['user_ids'] ?? '')?>" style="" placeholder="">
                                     </td>
                                     <td>
                                         <button type="button" class="adm-btn" onclick="removeLockRow(this)" style="margin-left:1rem;">
@@ -292,8 +290,8 @@ $tabControl->Begin();
                 <select name="lock_iblock_id[]" class="lock-iblock-select" onchange="loadProperties(this)" style="max-width:160px;">
                     <option value=""><?=Loc::getMessage('AWZ_LOCKFIELDSUP1C_OPT_LOCK_SELECT_IBLOCK')?></option>
                     <?foreach(IblockLockHandler::getIblocks() as $ib):?>
-                        <option value="<?=$ib['ID']?>">
-                            [<?=$ib['ID']?>] <?=$ib['NAME']?>
+                        <option value="<?=(int)$ib['ID']?>">
+                            [<?=(int)$ib['ID']?>] <?=htmlspecialcharsEx($ib['NAME'])?>
                         </option>
                     <?endforeach;?>
                 </select>

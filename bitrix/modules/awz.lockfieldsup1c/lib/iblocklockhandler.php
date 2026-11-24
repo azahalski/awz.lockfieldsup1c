@@ -29,6 +29,8 @@ class IblockLockHandler
     const SYSTEM_FIELD_ELEMENT_DETAIL_TEXT_TYPE = 'ELEMENT_DETAIL_TEXT_TYPE';
     const SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT = 'ELEMENT_PREVIEW_TEXT';
     const SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT_TYPE = 'ELEMENT_PREVIEW_TEXT_TYPE';
+    const SYSTEM_FIELD_ELEMENT_DETAIL_PICTURE = 'ELEMENT_DETAIL_PICTURE';
+    const SYSTEM_FIELD_ELEMENT_PREVIEW_PICTURE = 'ELEMENT_PREVIEW_PICTURE';
 
     const SYSTEM_FIELD_SECTION_TYPE = 'section';
     const SYSTEM_FIELD_ELEMENT_TYPE = 'element';
@@ -240,24 +242,60 @@ class IblockLockHandler
             }
 
             $lockType = $propConfig['lock_type'] ?? self::LOCK_TYPE_ALL;
-            
+
             if(self::isSystemField($propCode)){
                 $currentValue = $currentEl[substr($propCode, strlen(self::SYSTEM_FIELD_ELEMENT_TYPE)+1)] ?? '';
-            }elseif(self::isElementSection($propCode)){
-                $allSections = [];
-                if($currentEl['IBLOCK_SECTION_ID']){
-                    $allSections[] = $currentEl['IBLOCK_SECTION_ID'];
+                if(self::isElementSection($propCode)){
+                    $allSections = [];
+                    if($currentEl['IBLOCK_SECTION_ID']){
+                        $allSections[] = $currentEl['IBLOCK_SECTION_ID'];
+                    }
+                    $r = \Bitrix\Iblock\SectionElementTable::getList([
+                        "select"=>["IBLOCK_SECTION_ID"],
+                        'filter'=>['IBLOCK_ELEMENT_ID'=>$arFields['ID']],
+                        'order'=>['IBLOCK_SECTION_ID'=>'asc']
+                    ]);
+                    while($sectData = $r->fetch()){
+                        if(!in_array($sectData['IBLOCK_SECTION_ID'], $allSections))
+                            $allSections[] = $sectData['IBLOCK_SECTION_ID'];
+                    }
+                    $currentValue = $allSections;
                 }
-                $r = \Bitrix\Iblock\SectionElementTable::getList([
-                    "select"=>["IBLOCK_SECTION_ID"],
-                    'filter'=>['IBLOCK_ELEMENT_ID'=>$arFields['ID']],
-                    'order'=>['IBLOCK_SECTION_ID'=>'asc']
-                ]);
-                while($sectData = $r->fetch()){
-                    if(!in_array($sectData['IBLOCK_SECTION_ID'], $allSections))
-                        $allSections[] = $sectData['IBLOCK_SECTION_ID'];
+                // Если разделы уже заполнены — убираем их из обновления,
+                // возврат старых значений не потребуется
+                if(self::isElementSection($propCode) && !empty($currentValue)){
+                    if(isset($arFields['IBLOCK_SECTION'])){
+                        unset($arFields['IBLOCK_SECTION']);
+                    }
+                    if(isset($arFields['IBLOCK_SECTION_ID'])){
+                        unset($arFields['IBLOCK_SECTION_ID']);
+                    }
+                    Logger::info('Lock element property: unset before update', [
+                        'element_id' => (int)$arFields['ID'],
+                        'iblock_id' => $iblockId,
+                        'prop_code' => $propCode,
+                        'lock_type' => $lockType,
+                        'sections' => $currentValue
+                    ]);
+                    continue;
                 }
-                $currentValue = $allSections;
+                // Остальные системные поля элемента: если заполнены и тип блокировки all —
+                // убираем из обновления (работают только на unset)
+                if($lockType === self::LOCK_TYPE_ALL){
+                    $fieldName = substr($propCode, strlen(self::SYSTEM_FIELD_ELEMENT_TYPE)+1);
+                    $isFilled = ($currentValue !== null && $currentValue !== '' && !(is_array($currentValue) && empty($currentValue)));
+                    if($isFilled && isset($arFields[$fieldName])){
+                        unset($arFields[$fieldName]);
+                        Logger::info('Lock element property: unset before update', [
+                            'element_id' => (int)$arFields['ID'],
+                            'iblock_id' => $iblockId,
+                            'prop_code' => $propCode,
+                            'lock_type' => $lockType,
+                            'field' => $fieldName
+                        ]);
+                        continue;
+                    }
+                }
             }else{
                 $propId = self::getPropertyIdByCode($iblockId, $propCode);
                 if (!$propId) {
@@ -363,14 +401,21 @@ class IblockLockHandler
             if(!empty($propsToRestoreSys)){
                 self::$lockElements[$arFields['ID']] = true;
                 $el = new \CIblockElement();
-                $el->Update($arFields['ID'], $propsToRestoreSys);
+                $res = $el->Update($arFields['ID'], $propsToRestoreSys);
+                if(!$res){
+                    Logger::error('CIblockElement update', [
+                        'element_id' => (int)$arFields['ID'],
+                        'iblock_id' => $iblockId,
+                        'err' => (string)$el->LAST_ERROR
+                    ]);
+                }
             }
             if(!empty($propsToRestore) || !empty($propsToRestoreSys)){
                 Logger::info('Restore element properties after update', [
                     'element_id' => (int)$arFields['ID'],
                     'iblock_id' => $iblockId,
-                    'props' => array_keys($propsToRestore),
-                    'system_fields' => array_keys($propsToRestoreSys)
+                    'props' => $propsToRestore,
+                    'system_fields' => $propsToRestoreSys
                 ]);
             }
         }
@@ -730,6 +775,8 @@ class IblockLockHandler
             self::SYSTEM_FIELD_ELEMENT_DETAIL_TEXT_TYPE => 'Элемент: Тип описания',
             self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT => 'Элемент: Анонс',
             self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT_TYPE => 'Элемент: Тип анонса',
+            self::SYSTEM_FIELD_ELEMENT_DETAIL_PICTURE => 'Элемент: Детальная картинка',
+            self::SYSTEM_FIELD_ELEMENT_PREVIEW_PICTURE => 'Элемент: Картинка анонса',
         ];
     }
 
@@ -752,7 +799,9 @@ class IblockLockHandler
             self::SYSTEM_FIELD_ELEMENT_DETAIL_TEXT,
             self::SYSTEM_FIELD_ELEMENT_DETAIL_TEXT_TYPE,
             self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT,
-            self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT_TYPE
+            self::SYSTEM_FIELD_ELEMENT_PREVIEW_TEXT_TYPE,
+            self::SYSTEM_FIELD_ELEMENT_DETAIL_PICTURE,
+            self::SYSTEM_FIELD_ELEMENT_PREVIEW_PICTURE
         ]);
     }
 
